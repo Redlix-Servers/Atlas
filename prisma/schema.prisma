@@ -57,14 +57,19 @@ model Task {
 }
 
 model Client {
-  id          String    @id @default(cuid())
-  clientRef   String    @unique
-  name        String
-  email       String
-  company     String?
-  developerId String?
-  developer   Developer? @relation(fields: [developerId], references: [id], onDelete: SetNull)
-  createdAt   DateTime  @default(now())
+  id              String     @id @default(cuid())
+  clientRef       String     @unique
+  name            String
+  email           String
+  company         String?
+  companyType     String?
+  authorizedName  String?
+  phone           String?
+  address         String?
+  developerId     String?
+  developer       Developer? @relation(fields: [developerId], references: [id], onDelete: SetNull)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
 }
 
 model AuditLog {

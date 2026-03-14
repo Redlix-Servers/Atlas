@@ -13,6 +13,10 @@ export async function createClient(formData: FormData) {
   const name = formData.get('name') as string;
   const email = formData.get('email') as string;
   const company = formData.get('company') as string;
+  const companyType = formData.get('companyType') as string;
+  const authorizedName = formData.get('authorizedName') as string;
+  const phone = formData.get('phone') as string;
+  const address = formData.get('address') as string;
   const developerId = formData.get('developerId') as string;
 
   if (!name || !email) return { error: 'Name and email are required' };
@@ -28,6 +32,10 @@ export async function createClient(formData: FormData) {
         name,
         email,
         company,
+        companyType,
+        authorizedName,
+        phone,
+        address,
         developerId: developerId || null,
       }
     });
