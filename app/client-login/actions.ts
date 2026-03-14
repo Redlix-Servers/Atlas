@@ -12,11 +12,11 @@ export async function clientLogin(formData: FormData) {
 
   try {
     const client = await prisma.client.findUnique({
-      where: { id: clientId },
+      where: { clientRef: clientId },
     });
 
     if (!client) {
-      return { error: 'Invalid Client ID. Please check your credentials.' };
+      return { error: 'Invalid ID. Ensure it follows the RED-XXXX format (e.g., RED-9482).' };
     }
 
     const cookieStore = await cookies();
