@@ -336,6 +336,26 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("playground_upload_batch", (files) => {
+    try {
+      files.forEach(({ path: filePath, content }) => {
+        const fullPath = path.join(WORKSPACE_ROOT, filePath);
+        if (!fullPath.startsWith(WORKSPACE_ROOT)) return;
+        
+        const dir = path.dirname(fullPath);
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        
+        fs.writeFileSync(fullPath, content);
+      });
+      
+      const tree = getTree(WORKSPACE_ROOT);
+      io.emit("playground_tree", tree);
+      console.log(`[Playground] Batch upload completed: ${files.length} files by ${name}`);
+    } catch (err) {
+      socket.emit("playground_error", "Failed to upload batch");
+    }
+  });
+
   socket.on("playground_code_change", ({ path: filePath, content }) => {
     socket.broadcast.emit("playground_code_update", { path: filePath, content });
   });

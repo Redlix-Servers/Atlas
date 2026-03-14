@@ -20,7 +20,8 @@ import {
   TerminalIcon as TermIcon,
   FileIcon,
   SearchIcon,
-  XIcon
+  XIcon,
+  UploadIcon
 } from 'lucide-react';
 
 type FileNode = {
@@ -49,6 +50,7 @@ export default function PlaygroundClient({
   const terminalRef = useRef<HTMLDivElement>(null);
   const xtermRef = useRef<Terminal | null>(null);
   const fitAddonRef = useRef<FitAddon | null>(null);
+  const folderInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize Socket
   useEffect(() => {
@@ -185,6 +187,29 @@ export default function PlaygroundClient({
     }
   };
 
+  const handleFolderUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsSaving(true);
+    const fileData: { path: string, content: string }[] = [];
+    
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const path = file.webkitRelativePath;
+        const content = await file.text();
+        fileData.push({ path, content });
+      }
+      socketRef.current?.emit('playground_upload_batch', fileData);
+    } catch (err) {
+      console.error('Folder upload failed:', err);
+    } finally {
+      setIsSaving(false);
+      if (folderInputRef.current) folderInputRef.current.value = '';
+    }
+  };
+
   const getFileIcon = (name: string) => {
     if (name.endsWith('.js') || name.endsWith('.ts') || name.endsWith('.tsx')) return <FileCodeIcon size={14} className="text-blue-400" />;
     if (name.endsWith('.css')) return <FileCodeIcon size={14} className="text-pink-400" />;
@@ -271,6 +296,24 @@ export default function PlaygroundClient({
         </div>
 
         <div className="flex items-center gap-2">
+          <input 
+            type="file" 
+            ref={folderInputRef} 
+            onChange={handleFolderUpload} 
+            className="hidden" 
+            // @ts-ignore
+            webkitdirectory="" 
+            directory="" 
+            multiple 
+          />
+          <button 
+            onClick={() => folderInputRef.current?.click()}
+            disabled={isSaving}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-900 border border-white/5 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all disabled:opacity-30"
+          >
+            <UploadIcon size={14} />
+            <span className="text-xs font-semibold">Import Folder</span>
+          </button>
           <button 
             onClick={saveFile}
             disabled={!activeFile || isSaving}
