@@ -10,7 +10,7 @@ export default function Navbar() {
             <img
               src="https://ik.imagekit.io/dypkhqxip/logo_atlas.png"
               alt="Atlas Logo"
-              className="h-8 w-auto object-contain grayscale opacity-90 hover:opacity-100 hover:grayscale-0 transition-all"
+              className="h-8 w-auto object-contain opacity-90 hover:opacity-100 transition-all"
             />
           </Link>
 
@@ -20,6 +20,9 @@ export default function Navbar() {
             </Link>
             <Link href="https://github.com/Redlix-Servers/Atlas" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
               GitHub
+            </Link>
+            <Link href="/status" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
+              Platform Status
             </Link>
           </div>
         </div>
